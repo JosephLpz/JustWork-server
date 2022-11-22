@@ -1,0 +1,17 @@
+package JustWork.server.repository;
+
+import JustWork.server.models.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
+
+    Optional<Usuario> findByEmailAndEliminadoIsFalse(String email);
+
+    Optional<Usuario> findByUuidAndEliminadoFalse(UUID uuid);
+}

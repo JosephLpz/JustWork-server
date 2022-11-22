@@ -10,6 +10,8 @@ import org.springframework.security.core.token.Sha512DigestUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -50,6 +52,12 @@ public class Usuario {
     private String passwordSha512;
 
     private String firma;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "usuario_roles",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "rol_id"))
+    private Set<Rol> roles = new HashSet<>();
 
     @Version
     private int version;

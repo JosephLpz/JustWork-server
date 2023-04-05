@@ -21,17 +21,19 @@ CREATE TABLE token (
     id                  BIGSERIAL PRIMARY KEY,
     fecha_creacion      timestamp without time zone,
     fecha_expiracion    timestamp without time zone,
+    sso_fecha_expiracion    timestamp without time zone,
     sha_token           character varying(128) DEFAULT NULL,
     firma               character varying(128) DEFAULT NULL,
     usuario_id          bigint NOT NULL,
     sso_access_token    character varying(255) DEFAULT NULL
+    sso_refresh_token    character varying(255) DEFAULT NULL
 );
 
 
 CREATE TABLE rol(
     id                  BIGSERIAL PRIMARY KEY,
     uuid                uuid DEFAULT NULL,
-    nombre              haracter varying(100) NOT NULL
+    nombre              character varying(100) NOT NULL
 );
 
 CREATE TABLE usuario_roles(

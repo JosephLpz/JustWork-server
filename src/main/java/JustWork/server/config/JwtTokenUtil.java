@@ -1,6 +1,8 @@
 package JustWork.server.config;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,18 +16,18 @@ import java.util.function.Function;
 
 @Slf4j
 @Component
-public class JwtUtils implements Serializable {
-
+public class JwtTokenUtil implements Serializable {
     public static final long JWT_TOKEN_VALIDITY_SECONDS = 44;
     private static final long serialVersionUID = -4499121051127260336L;
 
     @Value("${jwt.secret}")
     private String secret;
 
+    //retrieve username from jwt token
     public String getUserUUIDFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
-
+    //retrieve expiration date from jwt token
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }
@@ -33,30 +35,33 @@ public class JwtUtils implements Serializable {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
-
+    //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
-
+    //check if the token has expired
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
-
-
+    //generate token for user
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         return doGenerateToken(claims, userDetails.getUsername(),new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY_SECONDS * 1000));
     }
-
+    //while creating the token -
+//1. Define  claims of the token, like Issuer, Expiration, Subject, and the ID
+//2. Sign the JWT using the HS512 algorithm and secret key.
+//3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
+//   compaction of the JWT to a URL-safe string
     public String doGenerateToken(Map<String, Object> claims, String subject, Date expirationDate) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }
-
-    public Boolean validaToken(String jwtToken, UserDetails userDetails) {
-        log.info("[validaToken] jwtToken:"+jwtToken+" userDetails:"+userDetails);
+    //validate token
+    public Boolean validateToken(String jwtToken, UserDetails userDetails) {
+        log.info("[validateToken] jwtToken:"+jwtToken+" userDetails:"+userDetails);
         final String username = getUserUUIDFromToken(jwtToken);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken));
     }

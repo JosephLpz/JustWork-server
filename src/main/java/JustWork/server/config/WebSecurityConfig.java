@@ -13,12 +13,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.Arrays;
 
@@ -36,12 +34,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UsuarioService usuarioService;
 
     @Autowired
-    private AuthTokenFilter authTokenFilter;
+    private JwtRequestFilter jwtRequestFilter;
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(usuarioService).passwordEncoder(passwordEncoder());
-    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -56,16 +51,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-
         httpSecurity.csrf().disable()
                 .cors(withDefaults())
                 .authorizeRequests()
-                .antMatchers("/app").permitAll()
+                .antMatchers("/api/ops/**").permitAll()
+                .antMatchers("/api/v1/app/login").permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        httpSecurity.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        httpSecurity.addFilterBefore(new CharacterEncodingFilter(), ChannelProcessingFilter.class);
+        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
@@ -73,7 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("POST","GET","PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList("Origin", AuthTokenFilter.X_TOKEN, "X-Requested-With","X-Request-ID", "Content-Type", "Accept", "Referer", "User-Agent", "X-Platform","X-Secret"));
+        configuration.setAllowedHeaders(Arrays.asList("Origin", JwtRequestFilter.X_TOKEN, "X-Requested-With","X-Request-ID", "Content-Type", "Accept", "Referer", "User-Agent", "X-Platform"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

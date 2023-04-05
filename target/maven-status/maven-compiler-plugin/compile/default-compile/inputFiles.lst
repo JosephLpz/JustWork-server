@@ -1,6 +1,6 @@
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/service/TokenService.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/interfaces/UserDetailsService.java
-/Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/config/AuthEntryPointJwt.java
+/Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/json/JsonMapper.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/dto/LoginRequestDTO.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/models/Token.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/controllers/UsuarioController.java
@@ -8,12 +8,16 @@
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/repository/UsuarioRepository.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/service/UsuarioService.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/ServerApplication.java
-/Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/config/AuthTokenFilter.java
+/Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/json/JsonResponse.java
+/Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/config/JwtRequestFilter.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/models/Usuario.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/config/JwtAuthenticationEntryPoint.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/service/LoginService.java
+/Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/config/JwtTokenUtil.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/models/Rol.java
+/Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/json/RuntimeExceptionHandler.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/config/JwtUtils.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/models/RolEnum.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/repository/RolRepository.java
+/Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/controllers/PosicionController.java
 /Users/josephlpz/Documents/JustWork/JustWork-server/src/main/java/JustWork/server/config/WebSecurityConfig.java

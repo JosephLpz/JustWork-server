@@ -5,13 +5,13 @@ import JustWork.server.service.TokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.token.Sha512DigestUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -22,9 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @Slf4j
-@Configuration
-public class AuthTokenFilter extends OncePerRequestFilter {
-
+@Component
+public class JwtRequestFilter extends OncePerRequestFilter {
 
     public static final String X_TOKEN = "Authorization";
 
@@ -32,7 +31,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private TokenService tokenService;
 
     @Autowired
-    private JwtUtils jwtTokenUtil;
+    private JwtTokenUtil jwtTokenUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -40,12 +39,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         final String requestTokenHeader = request.getHeader(X_TOKEN);
         final String cabeceraLog="[doFilterInternal] ";
 
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
         String uuidUsuario = null;
         String jwtToken = null;
-
+// JWT Token is in the form "Bearer token". Remove Bearer word and get
+// only the Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
@@ -70,16 +67,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                         , "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
                         new ArrayList<>());
 
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken
+                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+// After setting the Authentication in the context, we specify
+// that the current user is authenticated. So it passes the
+// Spring Security Configurations successfully.
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
         log.info(cabeceraLog+"No hay sesion valida requestTokenHeader:"+requestTokenHeader);
         chain.doFilter(request, response);
     }
-
 }

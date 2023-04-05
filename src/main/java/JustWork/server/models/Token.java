@@ -10,6 +10,7 @@ import org.springframework.security.core.token.Sha512DigestUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Slf4j
 @Entity
